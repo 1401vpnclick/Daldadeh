@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>DANIAL ❤️ ROMINA — از دلت دربیاریم</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Tahoma,Arial,sans-serif;background:#02030a;color:#fff}
+body{display:flex;align-items:center;justify-content:center}
+#scene{position:fixed;inset:0;z-index:0;transition:background 1.8s ease,filter 1.8s ease}
+.scene-night{background:
+radial-gradient(circle at 50% 44%,rgba(40,95,150,.22),transparent 25%),
+radial-gradient(circle at 20% 75%,rgba(30,65,120,.18),transparent 28%),
+linear-gradient(145deg,#020611,#071324 55%,#02030a)}
+.scene-day{background:
+radial-gradient(circle at 50% 18%,rgba(255,255,255,.9),transparent 18%),
+radial-gradient(circle at 20% 28%,rgba(255,214,177,.55),transparent 30%),
+linear-gradient(180deg,#8ed5ff 0%,#dff6ff 48%,#f8e9d8 100%)}
+canvas{position:fixed;inset:0;width:100%;height:100%;z-index:1}
+#app{position:relative;z-index:3;width:min(92vw,560px);text-align:center}
+.card{padding:32px 24px;border:1px solid rgba(255,210,225,.2);border-radius:32px;
+background:linear-gradient(145deg,rgba(12,18,30,.74),rgba(10,8,20,.48));
+box-shadow:0 0 70px rgba(45,100,180,.13),inset 0 0 50px rgba(255,255,255,.025);
+backdrop-filter:blur(17px);-webkit-backdrop-filter:blur(17px)}
+.day .card{background:linear-gradient(145deg,rgba(255,255,255,.45),rgba(255,245,238,.32));
+border-color:rgba(255,255,255,.65);box-shadow:0 15px 70px rgba(70,130,170,.18);color:#342536}
+h1{font-size:25px;margin:0 0 12px;letter-spacing:.5px;text-shadow:0 0 24px rgba(255,90,160,.55)}
+p{line-height:2.2;color:#ffe5ef;font-size:15px;margin:10px 0 22px}
+.day p{color:#4b3442}
+button{border:1px solid rgba(255,150,195,.7);color:#fff;background:rgba(255,75,145,.12);
+padding:13px 20px;border-radius:999px;font-size:15px;margin:6px;cursor:pointer;
+box-shadow:0 0 24px rgba(255,50,145,.13);transition:.25s}
+button:hover{transform:translateY(-2px) scale(1.03);background:rgba(255,75,145,.23)}
+.day button{color:#4b2638;background:rgba(255,255,255,.38);border-color:rgba(130,85,100,.3)}
+.heart{font-size:70px;animation:beat 1.4s infinite;text-shadow:0 0 35px #ff2385;margin:4px}
+@keyframes beat{50%{transform:scale(1.12)}}
+.flower{font-size:66px;letter-spacing:5px;animation:bloom 1s ease both}
+@keyframes bloom{from{opacity:0;transform:scale(.2) rotate(-18deg)}to{opacity:1;transform:none}}
+.small{font-size:12px;color:#ffc6dc;line-height:2}
+.day .small{color:#684c5b}
+.fade{animation:fade .65s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.badge{display:inline-block;font-size:11px;color:#ffbdd8;border:1px solid #8d3d68;border-radius:999px;padding:5px 10px;margin-bottom:15px}
+.day .badge{color:#6a4055;border-color:#a9798d}
+.finalName{font-size:30px;font-weight:bold;letter-spacing:4px;text-shadow:0 0 10px #fff,0 0 30px #ff2f8e}
+.final{font-size:16px;line-height:2.3;color:#fff2f8}
+.day .final{color:#3d2936}
+.hidden{display:none}
+.syringe{font-size:58px;display:inline-block;transform:rotate(-20deg);filter:drop-shadow(0 0 18px rgba(110,190,255,.45));animation:float 2.2s ease-in-out infinite}
+@keyframes float{50%{transform:rotate(-20deg) translateY(-8px)}}
+.mood{font-size:13px;color:#b9d8ff;margin-bottom:14px}
+.day .mood{color:#735565}
+</style>
+</head>
+<body>
+<div id="scene" class="scene-night"></div>
+<canvas id="bg"></canvas>
+<div id="app"></div>
+
+<script>
+const canvas=document.getElementById("bg"),ctx=canvas.getContext("2d");
+const scene=document.getElementById("scene"),app=document.getElementById("app");
+let W,H,D,stars=[],petals=[],t=0,step=0;
+function resize(){
+ D=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;
+ canvas.width=W*D;canvas.height=H*D;canvas.style.width=W+"px";canvas.style.height=H+"px";
+ ctx.setTransform(D,0,0,D,0,0);
+ stars=Array.from({length:170},()=>({x:Math.random()*W,y:Math.random()*H,r:.3+Math.random()*1.6,a:Math.random()*6.28,s:.005+Math.random()*.02}));
+ petals=Array.from({length:38},()=>({x:Math.random()*W,y:Math.random()*H,v:.15+Math.random()*.65,r:2+Math.random()*5,rot:Math.random()*6.28}));
+}
+addEventListener("resize",resize);resize();
+
+function draw(){
+ requestAnimationFrame(draw);t+=.01;
+ ctx.fillStyle=document.body.classList.contains("day")?"rgba(220,242,250,.16)":"rgba(2,4,12,.2)";
+ ctx.fillRect(0,0,W,H);
+ for(const s of stars){
+  s.a+=s.s;
+  const a=document.body.classList.contains("day")?.08:.16+.27*(Math.sin(s.a)+1);
+  ctx.fillStyle=`rgba(255,${document.body.classList.contains("day")?220:190},${document.body.classList.contains("day")?240:225},${a})`;
+  ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();
+ }
+ for(const p of petals){
+  p.y+=p.v;p.x+=Math.sin(t+p.rot)*.25;
+  if(p.y>H+10){p.y=-10;p.x=Math.random()*W}
+  ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot+=.006);
+  ctx.fillStyle=document.body.classList.contains("day")?"rgba(255,140,160,.22)":"rgba(255,100,170,.09)";
+  ctx.beginPath();ctx.ellipse(0,0,p.r,p.r*1.8,.4,0,Math.PI*2);ctx.fill();ctx.restore();
+ }
+}
+draw();
+
+function setScene(day=false){
+ document.body.classList.toggle("day",day);
+ scene.className=day?"scene-day":"scene-night";
+}
+function render(title,text,buttons="",mood=""){
+ app.innerHTML=`<div class="card fade"><div class="badge">DANIAL ❤️ ROMINA</div>
+ ${mood?`<div class="mood">${mood}</div>`:""}<h1>${title}</h1><p>${text}</p>${buttons}</div>`;
+}
+function btn(text,fn){return `<button onclick="${fn}">${text}</button>`}
+
+function start(){
+ setScene(false);
+ render(`<span class="syringe">💉</span><br>رومینا…`,`
+ دانیال الان حالش خوب نبود؛<br>
+ ولی چون نمی‌خواست تو ناراحت باشی، برات اینو درست کرده. ❤️`,
+ btn("اگه ناراحتی، بگو…","hurt(true)")+
+ btn("بریم جلو…","hurt(false)"),
+ "فقط برای تو."
+ );
+}
+
+function hurt(isHurt){
+ render("پس هنوز ناراحتی… 🌷",`
+ <div class="flower">🌷</div>
+ <b>دلِ تو برای دانیال مهم‌تر از هر بحثیه.</b>`,
+ btn("هنوز کامل از دلم درنیومده…","flower(1)"),
+ "یه گل برای دلت."
+ );
+}
+
+const flowers=[
+ ["🌷","برای تو","تو برای من خیلی مهم‌تری از چیزی که یک دلخوری بتونه بینمون فاصله بندازه."],
+ ["🌹","یکی دیگه برای دلت","هر چیزی که بینمون پیش میاد، دلیلِ جدایی نیست؛ دلیلیه برای اینکه بیشتر همدیگه رو بشناسیم و بایدها و نبایدهای دلمون رو بهتر بفهمیم."],
+ ["💐","اینم برای تو","میزان اهمیتی که برام داری، با هیچ بحثی کم نمی‌شه."],
+ ["🌸","آخرین گل","دلم نمی‌خواد هیچ اتفاقی باعث بشه ارزشِ بودنت برای من یادت بره."]
+];
+
+function flower(i){
+ const f=flowers[i%flowers.length];
+ const next=i+1;
+ render(`<div class="flower">${f[0]}</div>${f[1]}`,`
+ ${f[2]}`,
+ next<flowers.length
+ ? btn("هنوز یه گل دیگه… 🌹",`flower(${next})`)+btn("باشه، دیگه ناراحت نیستم ❤️","satisfied()")
+ : btn("دیگه ناراحت نیستم ❤️","satisfied()"),
+ "آروم‌آروم از دلت دربیاد."
+ );
+}
+
+function showPhone(){
+ setScene(true);
+ render("تماس با Dan Dan 🌧️",`
+ <div class="heart">📞</div>
+ <span class="small">اون می‌خواد صداتو بشنوه. ❤️</span>`,
+ btn("دوباره از اول 🌷","start"),
+ "حالا وقتشه صداتو بشنوه."
+ );
+}
+
+function satisfied(){
+ setScene(true);
+ render("حالا لبخند بزن، رومینا… ☀️",`
+ <b>تو برای من خیلی ارزشمندی.</b><br><br>
+ هیچ بحثی ارزشِ از دست دادنِ تو رو نداره؛
+ بعضی اتفاق‌ها فقط میان تا بفهمیم چطور بیشتر مراقب دلِ هم باشیم.<br><br>
+ <span class="final">خوشحالم که توی زندگی منی. ❤️<br><br>حالا بهش زنگ بزن…<br>اون می‌خواد صداتو بشنوه. 📞❤️</span>`,
+ btn("تماس با Dan Dan 🌧️","showPhone()"),
+ "از شبِ دلگیری تا روشنایی."
+ );
+}
+start();
+</script>
+</body>
+</html>
